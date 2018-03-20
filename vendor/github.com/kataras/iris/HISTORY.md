@@ -17,6 +17,71 @@ Developers are not forced to upgrade if they don't really need it. Upgrade whene
 
 **How to upgrade**: Open your command-line and execute this command: `go get -u github.com/kataras/iris` or let the automatic updater do that for you.
 
+# We, 14 March 2018 | v10.4.0
+
+- fix `APIBuilder, Party#StaticWeb` and `APIBuilder, Party#StaticEmbedded` wrong strip prefix inside children parties
+- keep the `iris, core/router#StaticEmbeddedHandler` and remove the `core/router/APIBuilder#StaticEmbeddedHandler`,  (note the `Handler` suffix) it's global and has nothing to do with the `Party` or the `APIBuilder`
+- fix high path cleaning between `{}` (we already escape those contents at the [interpreter](core/router/macro/interpreter) level but some symbols are still removed by the higher-level api builder) , i.e `\\` from the string's macro function `regex` contents as reported at [927](https://github.com/kataras/iris/issues/927) by [commit e85b113476eeefffbc7823297cc63cd152ebddfd](https://github.com/kataras/iris/commit/e85b113476eeefffbc7823297cc63cd152ebddfd)
+- sync the `golang.org/x/sys/unix` vendor
+
+## The most important
+
+We've made static files served up to 8 times faster using the new tool, <https://github.com/kataras/bindata> which is a fork of your beloved `go-bindata`, some unnecessary things for us were removed there and contains some additions for performance boost.
+
+## Reqs/sec with [shuLhan/go-bindata](https://github.com/shuLhan/go-bindata) and alternatives
+
+![go-bindata](https://github.com/kataras/bindata/raw/master/go-bindata-benchmark.png)
+
+## Reqs/sec with [kataras/bindata](https://github.com/kataras/bindata)
+
+![bindata](https://github.com/kataras/bindata/raw/master/bindata-benchmark.png)
+
+A **new** function `Party#StaticEmbeddedGzip` which has the same input arguments as the `Party#StaticEmbedded` added. The difference is that the **new** `StaticEmbeddedGzip` accepts the `GzipAsset` and `GzipAssetNames` from the `bindata` (go get -u github.com/kataras/bindata/cmd/bindata).
+
+You can still use both  `bindata` and `go-bindata` tools in the same folder, the first for embedding the rest of the static files (javascript, css, ...) and the second for embedding the templates!
+
+A full example can be found at: [_examples/file-server/embedding-gziped-files-into-app/main.go](_examples/file-server/embedding-gziped-files-into-app/main.go).
+
+_Happy Coding!_
+
+# Sa, 10 March 2018 | v10.3.0
+
+- The only one API Change is the [Application/Context/Router#RouteExists](https://godoc.org/github.com/kataras/iris/core/router#Router.RouteExists), it accepts the `Context` as its first argument instead of last now.
+
+- Fix cors middleware via https://github.com/iris-contrib/middleware/commit/048e2be034ed172c6754448b8a54a9c55debad46, relative issue: https://github.com/kataras/iris/issues/922 (still pending for a verification).
+
+- Add `Context#NextOr` and `Context#NextOrNotFound`
+
+```go
+// NextOr checks if chain has a next handler, if so then it executes it
+// otherwise it sets a new chain assigned to this Context based on the given handler(s)
+// and executes its first handler.
+//
+// Returns true if next handler exists and executed, otherwise false.
+//
+// Note that if no next handler found and handlers are missing then
+// it sends a Status Not Found (404) to the client and it stops the execution.
+NextOr(handlers ...Handler) bool
+// NextOrNotFound checks if chain has a next handler, if so then it executes it
+// otherwise it sends a Status Not Found (404) to the client and stops the execution.
+//
+// Returns true if next handler exists and executed, otherwise false.
+NextOrNotFound() bool
+```
+
+- Add a new `Party#AllowMethods` which if called before any `Handle, Get, Post...` will clone the routes to that methods as well.
+
+- Fix trailing slash from POST method request redirection as reported at: https://github.com/kataras/iris/issues/921 via https://github.com/kataras/iris/commit/dc589d9135295b4d080a9a91e942aacbfe5d56c5
+
+-  Add examples for read using custom decoder per type, read using custom decoder via `iris#UnmarshalerFunc` and to complete it add an example for the `context#ReadXML`, you can find them [here](https://github.com/kataras/iris/tree/master/_examples#how-to-read-from-contextrequest-httprequest)via https://github.com/kataras/iris/commit/78cd8e5f677fe3ff2c863c5bea7d1c161bf4c31e.
+
+- Add one more example for custom router macro functions, relative to https://github.com/kataras/iris/issues/918, you can find it [there](https://github.com/kataras/iris/blob/master/_examples/routing/dynamic-path/main.go#L144-L158), via https://github.com/kataras/iris/commit/a7690c71927cbf3aa876592fab94f04cada91b72
+
+- Add wrappers for `Pongo`'s `AsValue()` and `AsSaveValue()` by @neenar via PR: https://github.com/kataras/iris/pull/913
+
+- Remove unnecessary reflection usage on `context#UnmarshalBody` via https://github.com/kataras/iris/commit/4b9e41458b62035ea4933789c0a132c3ef2a90cc
+
+
 # Th, 15 February 2018 | v10.2.1
 
 Fix subdomains' `StaticEmbedded` & `StaticWeb` not found errors, as reported by [@speedwheel](https://github.com/speedwheel) via [facebook page's chat](https://facebook.com/iris.framework).

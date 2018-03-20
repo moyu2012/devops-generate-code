@@ -1,7 +1,7 @@
 package main
 
 import (
-	route "devops-config-agent/src/route/api"
+	route "devops-generate-code/src/route/api"
 
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
@@ -17,5 +17,5 @@ func main() {
 	app.Use(corsInit)
 
 	app = route.InitRoute(app)
-	app.Run(iris.Addr(":1919"))
+	app.Run(iris.Addr(":8080"))
 }

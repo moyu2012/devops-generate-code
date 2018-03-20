@@ -42,6 +42,12 @@ type repository struct {
 }
 
 func (r *repository) register(route *Route) {
+	for _, r := range r.routes {
+		if r.String() == route.String() {
+			return // do not register any duplicates, the sooner the better.
+		}
+	}
+
 	r.routes = append(r.routes, route)
 }
 
@@ -92,10 +98,15 @@ type APIBuilder struct {
 	doneGlobalHandlers context.Handlers
 	// the per-party
 	relativePath string
+	// allowMethods are filled with the `AllowMethods` func.
+	// They are used to create new routes
+	// per any party's (and its children) routes registered
+	// if the method "x" wasn't registered already via  the `Handle` (and its extensions like `Get`, `Post`...).
+	allowMethods []string
 }
 
-var _ Party = &APIBuilder{}
-var _ RoutesProvider = &APIBuilder{} // passed to the default request handler (routerHandler)
+var _ Party = (*APIBuilder)(nil)
+var _ RoutesProvider = (*APIBuilder)(nil) // passed to the default request handler (routerHandler)
 
 // NewAPIBuilder creates & returns a new builder
 // which is responsible to build the API and the router handler.
@@ -127,6 +138,16 @@ func (api *APIBuilder) GetReport() error {
 // GetReporter returns the reporter for adding errors
 func (api *APIBuilder) GetReporter() *errors.Reporter {
 	return api.reporter
+}
+
+// AllowMethods will re-register the future routes that will be registered
+// via `Handle`, `Get`, `Post`, ... to the given "methods" on that Party and its children "Parties",
+// duplicates are not registered.
+//
+// Call of `AllowMethod` will override any previous allow methods.
+func (api *APIBuilder) AllowMethods(methods ...string) Party {
+	api.allowMethods = methods
+	return api
 }
 
 // Handle registers a route to the server's api.
@@ -170,23 +191,30 @@ func (api *APIBuilder) Handle(method string, relativePath string, handlers ...co
 	// here we separate the subdomain and relative path
 	subdomain, path := splitSubdomainAndPath(fullpath)
 
-	r, err := NewRoute(method, subdomain, path, possibleMainHandlerName, routeHandlers, api.macros)
-	if err != nil { // template path parser errors:
-		api.reporter.Add("%v -> %s:%s:%s", err, method, subdomain, path)
-		return nil
+	// if allowMethods are empty, then simply register with the passed, main, method.
+	methods := append(api.allowMethods, method)
+
+	var (
+		route *Route // the latest one is this route registered, see methods append.
+		err   error  // not used outside of loop scope.
+	)
+
+	for _, m := range methods {
+		route, err = NewRoute(m, subdomain, path, possibleMainHandlerName, routeHandlers, api.macros)
+		if err != nil { // template path parser errors:
+			api.reporter.Add("%v -> %s:%s:%s", err, method, subdomain, path)
+			return nil // fail on first error.
+		}
+
+		// Add UseGlobal & DoneGlobal Handlers
+		route.use(api.beginGlobalHandlers)
+		route.done(api.doneGlobalHandlers)
+
+		// global
+		api.routes.register(route)
 	}
 
-	// Add UseGlobal & DoneGlobal Handlers
-	r.use(api.beginGlobalHandlers)
-	r.done(api.doneGlobalHandlers)
-
-	// global
-	api.routes.register(r)
-
-	// per -party, used for done handlers
-	// api.apiRoutes = append(api.apiRoutes, r)
-
-	return r
+	return route
 }
 
 // HandleMany works like `Handle` but can receive more than one
@@ -259,6 +287,10 @@ func (api *APIBuilder) Party(relativePath string, handlers ...context.Handler) P
 	// append the parent's + child's handlers
 	middleware := joinHandlers(api.middleware, handlers)
 
+	// the allow methods per party and its children.
+	allowMethods := make([]string, len(api.allowMethods))
+	copy(allowMethods, api.allowMethods)
+
 	return &APIBuilder{
 		// global/api builder
 		macros:              api.macros,
@@ -269,8 +301,9 @@ func (api *APIBuilder) Party(relativePath string, handlers ...context.Handler) P
 		reporter:            api.reporter,
 		// per-party/children
 		middleware:   middleware,
-		doneHandlers: api.doneHandlers,
+		doneHandlers: api.doneHandlers[0:],
 		relativePath: fullpath,
+		allowMethods: allowMethods,
 	}
 }
 
@@ -516,23 +549,6 @@ func (api *APIBuilder) Any(relativePath string, handlers ...context.Handler) (ro
 	return
 }
 
-// StaticCacheDuration expiration duration for INACTIVE file handlers, it's the only one global configuration
-// which can be changed.
-var StaticCacheDuration = 20 * time.Second
-
-const (
-	lastModifiedHeaderKey       = "Last-Modified"
-	ifModifiedSinceHeaderKey    = "If-Modified-Since"
-	contentDispositionHeaderKey = "Content-Disposition"
-	cacheControlHeaderKey       = "Cache-Control"
-	contentEncodingHeaderKey    = "Content-Encoding"
-	acceptEncodingHeaderKey     = "Accept-Encoding"
-	// contentLengthHeaderKey represents the header["Content-Length"]
-	contentLengthHeaderKey = "Content-Length"
-	contentTypeHeaderKey   = "Content-Type"
-	varyHeaderKey          = "Vary"
-)
-
 func (api *APIBuilder) registerResourceRoute(reqPath string, h context.Handler) *Route {
 	api.Head(reqPath, h)
 	return api.Get(reqPath, h)
@@ -594,28 +610,37 @@ func (api *APIBuilder) StaticContent(reqPath string, cType string, content []byt
 	return api.registerResourceRoute(reqPath, h)
 }
 
-// StaticEmbeddedHandler returns a Handler which can serve
-// embedded into executable files.
-//
-//
-// Examples: https://github.com/kataras/iris/tree/master/_examples/file-server
-func (api *APIBuilder) StaticEmbeddedHandler(vdir string, assetFn func(name string) ([]byte, error), namesFn func() []string) context.Handler {
-	// Notes:
-	// This doesn't need to be APIBuilder's scope,
-	// but we'll keep it here for consistently.
-	return StaticEmbeddedHandler(vdir, assetFn, namesFn)
-}
-
 // StaticEmbedded  used when files are distributed inside the app executable, using go-bindata mostly
 // First parameter is the request path, the path which the files in the vdir will be served to, for example "/static"
-// Second parameter is the (virtual) directory path, for example "./assets"
+// Second parameter is the (virtual) directory path, for example "./assets" (no trailing slash),
 // Third parameter is the Asset function
 // Forth parameter is the AssetNames function.
 //
 // Returns the GET *Route.
 //
-// Examples: https://github.com/kataras/iris/tree/master/_examples/file-server
+// Example: https://github.com/kataras/iris/tree/master/_examples/file-server/embedding-files-into-app
 func (api *APIBuilder) StaticEmbedded(requestPath string, vdir string, assetFn func(name string) ([]byte, error), namesFn func() []string) *Route {
+	return api.staticEmbedded(requestPath, vdir, assetFn, namesFn, false)
+}
+
+// StaticEmbeddedGzip registers a route which can serve embedded gziped files
+// that are embedded using the https://github.com/kataras/bindata tool and only.
+// It's 8 times faster than the `StaticEmbeddedHandler` with `go-bindata` but
+// it sends gzip response only, so the client must be aware that is expecting a gzip body
+// (browsers and most modern browsers do that, so you can use it without fair).
+//
+// First parameter is the request path, the path which the files in the vdir will be served to, for example "/static"
+// Second parameter is the (virtual) directory path, for example "./assets" (no trailing slash),
+// Third parameter is the GzipAsset function
+// Forth parameter is the GzipAssetNames function.
+//
+// Example: https://github.com/kataras/iris/tree/master/_examples/file-server/embedding-gziped-files-into-app
+func (api *APIBuilder) StaticEmbeddedGzip(requestPath string, vdir string, gzipAssetFn func(name string) ([]byte, error), gzipNamesFn func() []string) *Route {
+	return api.staticEmbedded(requestPath, vdir, gzipAssetFn, gzipNamesFn, true)
+}
+
+// look fs.go#StaticEmbeddedHandler
+func (api *APIBuilder) staticEmbedded(requestPath string, vdir string, assetFn func(name string) ([]byte, error), namesFn func() []string, assetsGziped bool) *Route {
 	fullpath := joinPath(api.relativePath, requestPath)
 	// if subdomain,
 	// here we get the full path of the path only,
@@ -623,9 +648,10 @@ func (api *APIBuilder) StaticEmbedded(requestPath string, vdir string, assetFn f
 	// and we need that path to call the `StripPrefix`.
 	_, fullpath = splitSubdomainAndPath(fullpath)
 
-	requestPath = joinPath(fullpath, WildcardParam("file"))
+	paramName := "file"
+	requestPath = joinPath(requestPath, WildcardParam(paramName))
 
-	h := api.StaticEmbeddedHandler(vdir, assetFn, namesFn)
+	h := StaticEmbeddedHandler(vdir, assetFn, namesFn, assetsGziped)
 
 	if fullpath != "/" {
 		h = StripPrefix(fullpath, h)
@@ -712,16 +738,17 @@ func (api *APIBuilder) Favicon(favPath string, requestPath ...string) *Route {
 //
 // Returns the GET *Route.
 func (api *APIBuilder) StaticWeb(requestPath string, systemPath string) *Route {
-	paramName := "file"
-
 	fullpath := joinPath(api.relativePath, requestPath)
+
 	// if subdomain,
 	// here we get the full path of the path only,
 	// because a subdomain can have parties as well
 	// and we need that path to call the `StripPrefix`.
 	_, fullpath = splitSubdomainAndPath(fullpath)
 
-	requestPath = joinPath(fullpath, WildcardParam(paramName))
+	paramName := "file"
+	requestPath = joinPath(requestPath, WildcardParam(paramName))
+
 	h := NewStaticHandlerBuilder(systemPath).Listing(false).Build()
 
 	if fullpath != "/" {
