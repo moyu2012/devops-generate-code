@@ -9,6 +9,7 @@ RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" >> /
 
 RUN apt-get update && apt-get install --no-install-recommends -y oracle-java8-installer oracle-java8-set-default maven 
 RUN npm install --quiet --global vue-cli
+RUN npm install --quiet --global angular-cli
 RUN apt-get install -y expect
 COPY ./vue.sh /usr/bin/vue-generate
 RUN chmod +x /usr/bin/vue-generate
