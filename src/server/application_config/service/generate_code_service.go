@@ -17,7 +17,7 @@ func (s *ApplicationConfigService) CMDGenerateVue(name string) (file, dirName st
 	if err != nil {
 		return "", "", err
 	}
-	println("cd /tmp/" + dirName + " && /tmp/vue-generate " + name)
+	println("cd /tmp/" + dirName + " && /usr/bin/vue-generate " + name)
 	_, err = exec.Command("/bin/bash", "-c", "cd /tmp/"+dirName+" && /usr/bin/vue-generate "+name).Output()
 	if err != nil {
 		exec.Command("/bin/bash", "-c", "rm -fr /tmp/"+dirName).Output()
@@ -68,4 +68,33 @@ func (s *ApplicationConfigService) CMDGenerateJava(name, group_id, artifact_id, 
 		return "", "", err
 	}
 	return "/tmp/" + dirName + "/" + artifact_id + "/generate-java.tar.gz", dirName, nil
+}
+
+func (s *ApplicationConfigService) CMDGenerateAngular(name string) (file, dirName string, err error) {
+	time := time.Now().Unix()
+	dirName = name + "." + strconv.FormatInt(time, 10)
+	println("mkdir -p /tmp/" + dirName)
+	_, err = exec.Command("/bin/bash", "-c", "mkdir -p /tmp/"+dirName).Output()
+	if err != nil {
+		return "", "", err
+	}
+	println("cd /tmp/" + dirName + " && ng new " + name)
+	_, err = exec.Command("/bin/bash", "-c", "cd /tmp/"+dirName+" && ng new "+name).Output()
+	if err != nil {
+		exec.Command("/bin/bash", "-c", "rm -fr /tmp/"+dirName).Output()
+		return "", "", err
+	}
+	println("rm -fr /tmp/" + dirName + "/" + name + "/node_modules")
+	_, err = exec.Command("/bin/bash", "-c", "rm -fr /tmp/"+dirName+"/"+name+"/node_modules").Output()
+	if err != nil {
+		exec.Command("/bin/bash", "-c", "rm -fr /tmp/"+dirName).Output()
+		return "", "", err
+	}
+	println("cd /tmp/" + dirName + "/" + name + " && tar -zcvf generate-angular.tar.gz *")
+	_, err = exec.Command("/bin/bash", "-c", "cd /tmp/"+dirName+"/"+name+" && tar -zcvf generate-angular.tar.gz *").Output()
+	if err != nil {
+		exec.Command("/bin/bash", "-c", "rm -fr /tmp/"+dirName).Output()
+		return "", "", err
+	}
+	return "/tmp/" + dirName + "/" + name + "/generate-angular.tar.gz", dirName, nil
 }

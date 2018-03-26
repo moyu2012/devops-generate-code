@@ -52,7 +52,7 @@
 		},
 		{
 			"ImportPath": "github.com/hashicorp/go-version",
-			"Rev": "4fe82ae3040f80a03d04d2cccb5606a626b8e1ee"
+			"Rev": "23480c0665776210b5fbbac6eaaee40e3e6a96b7"
 		},
 		{
 			"ImportPath": "github.com/iris-contrib/formBinder",
@@ -74,137 +74,137 @@
 		},
 		{
 			"ImportPath": "github.com/kataras/golog",
-			"Rev": "dd676348ce75fa471fbbcd1bbbd131d00179756a"
+			"Rev": "03be101463868edc5a81f094fc68a5f6c1b5503a"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/cache",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/cache/cfg",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/cache/client",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/cache/client/rule",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/cache/entry",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/cache/ruleset",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/cache/uri",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/context",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/errors",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/handlerconv",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/host",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/maintenance",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/maintenance/version",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/memstore",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/netutil",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/router",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/router/macro",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/router/macro/interpreter/ast",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/router/macro/interpreter/lexer",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/router/macro/interpreter/parser",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/router/macro/interpreter/token",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/core/router/node",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/middleware/logger",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/middleware/recover",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/iris/view",
-			"Comment": "v10.4.0-6-g73e3b043",
-			"Rev": "73e3b043dac6d440252c49a0f30c63bb6311b75e"
+			"Comment": "v10.5.0",
+			"Rev": "41b17aca9ec493f6eedf17c0e5545cf134f2d445"
 		},
 		{
 			"ImportPath": "github.com/kataras/pio",
@@ -243,11 +243,6 @@
 			"ImportPath": "github.com/klauspost/cpuid",
 			"Comment": "v1.1-2-gae832f2",
 			"Rev": "ae832f27941af41db13bd6d8efd2493e3b22415a"
-		},
-		{
-			"ImportPath": "github.com/klauspost/crc32",
-			"Comment": "v1.1-5-gbab58d7",
-			"Rev": "bab58d77464aa9cf4e84200c3276da0831fe0c03"
 		},
 		{
 			"ImportPath": "github.com/mattn/go-colorable",

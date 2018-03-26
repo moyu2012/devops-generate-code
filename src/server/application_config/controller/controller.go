@@ -53,3 +53,23 @@ func (a *ApplicationController) GenerateJavaCode(ctx iris.Context) {
 	}
 
 }
+
+func (a *ApplicationController) GenerateAngularCode(ctx iris.Context) {
+	name := ctx.Params().Get("name")
+	service := &generate_service.ApplicationConfigService{}
+	println("---start to generate vue init code--")
+	file, dirName, err := service.CMDGenerateAngular(name)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.WriteString(err.Error())
+		return
+	}
+	ctx.SendFile(file, "generate-angular.tar.gz")
+	err = service.DeleteGZ(dirName)
+	println("---End to generate angular init code--")
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.WriteString(err.Error())
+		return
+	}
+}

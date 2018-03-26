@@ -24,5 +24,10 @@ func InitRoute(api *iris.Application) *iris.Application {
 		java.Get("/{name}/{group_id}/{artifact_id}/{version}/{package_name}/generate-java.tar.gz", appConfigController.GenerateJavaCode)
 		//?name={name}&&group_id={group_id}&&artifact_id={artifact_id}&&version={version}&&package_name={package_name}
 	}
+	anjular := api.Party("/angular")
+	{
+		appConfigController := &applicationConfigController.ApplicationController{}
+		anjular.Get("/{name}/generate-angular.tar.gz", appConfigController.GenerateAngularCode)
+	}
 	return api
 }
